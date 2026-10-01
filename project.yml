@@ -32,7 +32,6 @@ targets:
         ITSAppUsesNonExemptEncryption: false
     settings:
       base:
-        PRODUCT_NAME: baoboiii
         PRODUCT_MODULE_NAME: Baoboiii
         PRODUCT_BUNDLE_IDENTIFIER: com.gigilee.baoboiii
         TARGETED_DEVICE_FAMILY: "1"

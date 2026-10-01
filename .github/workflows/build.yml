@@ -74,7 +74,7 @@ jobs:
         run: |
           rm -rf Payload
           mkdir Payload
-          cp -R build/Build/Products/Release-iphoneos/baoboiii.app Payload/
+          cp -R build/Build/Products/Release-iphoneos/Baoboiii.app Payload/
           zip -qry baoboiii.ipa Payload
           ls -lh baoboiii.ipa
 
