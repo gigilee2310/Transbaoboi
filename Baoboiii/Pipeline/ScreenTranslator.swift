@@ -35,7 +35,7 @@ struct ScreenTranslator: Sendable {
     static let background: ScreenTranslator = {
         var t = ScreenTranslator()
         t.ocrTimeout = 10
-        t.translateTimeout = 14
+        t.translateTimeout = 22
         return t
     }()
 

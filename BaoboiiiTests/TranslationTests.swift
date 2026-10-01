@@ -131,3 +131,18 @@ final class RendererLayoutTests: XCTestCase {
         XCTAssertLessThanOrEqual(layout.frame.maxY, obstacle.minY)
     }
 }
+
+final class AppleTranslatorGroupingTests: XCTestCase {
+    func testMergesChineseVariantsIntoBiggerGroup() {
+        var groups: [SourceLanguage: [TranslationItem]] = [
+            .chineseSimplified: [TranslationItem(id: 1, text: "你好", language: .chineseSimplified),
+                                 TranslationItem(id: 2, text: "谢谢", language: .chineseSimplified)],
+            .chineseTraditional: [TranslationItem(id: 3, text: "謝謝", language: .chineseTraditional)],
+            .english: [TranslationItem(id: 4, text: "Hello", language: .english)],
+        ]
+        AppleTranslator.mergeChinese(&groups)
+        XCTAssertNil(groups[.chineseTraditional])
+        XCTAssertEqual(groups[.chineseSimplified]?.map(\.id).sorted(), [1, 2, 3])
+        XCTAssertEqual(groups[.english]?.count, 1)
+    }
+}
