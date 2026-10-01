@@ -11,6 +11,7 @@ enum BaoboiiiError: LocalizedError, CustomLocalizedStringResourceConvertible {
     case gemini(status: Int, message: String)
     case network(String)
     case timeout
+    case stepTimeout(String)
     case badResponse
     case cannotSaveImage
 
@@ -41,6 +42,8 @@ enum BaoboiiiError: LocalizedError, CustomLocalizedStringResourceConvertible {
             return "Không kết nối được mạng: \(detail)"
         case .timeout:
             return "Dịch quá lâu nên đã dừng. Hãy thử lại."
+        case .stepTimeout(let step):
+            return "Bước \"\(step)\" chạy quá lâu khi chạy ngầm nên đã dừng. Mở baoboiii → Cài đặt → Nhật ký và chụp màn hình gửi người phát triển."
         case .badResponse:
             return "Bản dịch trả về không đúng định dạng. Hãy thử lại."
         case .cannotSaveImage:

@@ -21,21 +21,40 @@ struct TranslateScreenIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<IntentFile> {
-        let outcome = try await ScreenTranslator().run(imageData: image.data)
+        let clock = Stopwatch()
+        let state = await MainActor.run { UIApplication.shared.applicationState }
+        DiagnosticsLog.log("▶︎ Phím tắt bắt đầu (app đang \(state == .active ? "mở" : "chạy ngầm"))")
+        do {
+            let file = try await translate()
+            DiagnosticsLog.log("✅ Xong sau \(clock.ms) ms")
+            DiagnosticsLog.flush()
+            return .result(value: file)
+        } catch {
+            DiagnosticsLog.log("❌ Lỗi sau \(clock.ms) ms: \((error as? BaoboiiiError)?.message ?? String(describing: error))")
+            DiagnosticsLog.flush()
+            throw error
+        }
+    }
+
+    private func translate() async throws -> IntentFile {
+        let data = image.data
+        DiagnosticsLog.log("Nhận ảnh: \(image.filename), \(data.count / 1024) KB")
+        // Smaller working image in the background: faster OCR, less memory, still sharp enough for CJK.
+        let outcome = try await ScreenTranslator.background.run(imageData: data, maxPixelSize: 2200)
         guard !outcome.blocks.isEmpty else {
             throw outcome.analysis.languages.isEmpty ? BaoboiiiError.nothingToTranslate : BaoboiiiError.badResponse
         }
 
-        let png: Data? = autoreleasepool {
-            guard let cg = outcome.translated.cgImage else { return nil }
-            return ImageLoader.pngData(cg)
-        }
-        guard let png else { throw BaoboiiiError.cannotReadImage }
+        let clock = Stopwatch()
+        let jpeg: Data? = autoreleasepool { outcome.translated.jpegData(compressionQuality: 0.92) }
+        guard let jpeg else { throw BaoboiiiError.cannotReadImage }
+        DiagnosticsLog.log("Xuất ảnh \(jpeg.count / 1024) KB (\(clock.ms) ms)")
 
+        let saveClock = Stopwatch()
         HistoryStore.save(ResultModel(outcome: outcome))
+        DiagnosticsLog.log("Lưu lịch sử (\(saveClock.ms) ms)")
 
-        let file = IntentFile(data: png, filename: "baoboiii-\(Int(Date().timeIntervalSince1970)).png", type: .png)
-        return .result(value: file)
+        return IntentFile(data: jpeg, filename: "baoboiii-\(Int(Date().timeIntervalSince1970)).jpg", type: .jpeg)
     }
 }
 

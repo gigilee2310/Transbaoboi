@@ -99,12 +99,14 @@ struct HomeView: View {
         }
         do {
             guard let data = try await item.loadTransferable(type: Data.self) else { throw BaoboiiiError.cannotReadImage }
+            DiagnosticsLog.log("▶︎ Dịch trong app")
             let outcome = try await ScreenTranslator().run(imageData: data)
             let model = ResultModel(outcome: outcome)
             if !model.blocks.isEmpty { HistoryStore.save(model) }
             result = model
         } catch {
             errorMessage = (error as? BaoboiiiError)?.message ?? error.localizedDescription
+            DiagnosticsLog.log("❌ \(errorMessage ?? "")")
         }
     }
 }

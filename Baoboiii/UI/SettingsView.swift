@@ -40,6 +40,18 @@ struct SettingsView: View {
 
                 geminiSection
 
+                Section {
+                    NavigationLink {
+                        DiagnosticsView()
+                    } label: {
+                        Label("Nhật ký chạy", systemImage: "list.bullet.rectangle")
+                    }
+                } header: {
+                    Text("Chẩn đoán")
+                } footer: {
+                    Text("Ghi lại từng bước mỗi lần dịch (kể cả khi chạy qua Phím tắt). Khi gặp lỗi, chụp màn hình nhật ký gửi người phát triển.")
+                }
+
                 Section("Dữ liệu") {
                     Button("Xoá bộ nhớ đệm bản dịch (\(cacheCount))", systemImage: "trash") {
                         Task {

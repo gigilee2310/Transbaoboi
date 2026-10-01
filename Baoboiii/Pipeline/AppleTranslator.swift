@@ -27,6 +27,7 @@ struct AppleTranslator: Translator {
         for language in SourceLanguage.allCases where groups[language] != nil {
             if await Self.status(for: language) != .installed { missing.append(language) }
         }
+        DiagnosticsLog.log("Apple: gói cần dùng \(groups.keys.map(\.rawValue).sorted()), thiếu \(missing.map(\.rawValue))")
         if !missing.isEmpty { throw BaoboiiiError.languagePackMissing(missing) }
 
         var result: [Int: String] = [:]
@@ -40,7 +41,9 @@ struct AppleTranslator: Translator {
 
     @MainActor
     private static func translate(_ items: [(id: Int, text: String)], from language: SourceLanguage) async throws -> [Int: String] {
+        let clock = Stopwatch()
         let session = TranslationSession(installedSource: language.localeLanguage, target: target)
+        DiagnosticsLog.log("Apple: mở phiên \(language.rawValue)→vi, dịch \(items.count) khối")
         let requests = items.map { TranslationSession.Request(sourceText: $0.text, clientIdentifier: String($0.id)) }
         do {
             let responses = try await session.translations(from: requests)
@@ -50,8 +53,10 @@ struct AppleTranslator: Translator {
                     result[id] = response.targetText
                 }
             }
+            DiagnosticsLog.log("Apple: xong \(language.rawValue) (\(clock.ms) ms)")
             return result
         } catch {
+            DiagnosticsLog.log("Apple: lỗi \(language.rawValue): \(String(describing: error))")
             throw BaoboiiiError.appleTranslationFailed(error.localizedDescription)
         }
     }
