@@ -1,0 +1,10 @@
+*.xcodeproj/
+Baoboiii/Info.plist
+build/
+DerivedData/
+Payload/
+*.ipa
+*.xcresult
+.DS_Store
+xcuserdata/
+.claude/

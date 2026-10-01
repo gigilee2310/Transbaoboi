@@ -1,0 +1,65 @@
+name: Baoboiii
+options:
+  bundleIdPrefix: com.gigilee
+  deploymentTarget:
+    iOS: "26.0"
+  developmentLanguage: vi
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+targets:
+  Baoboiii:
+    type: application
+    platform: iOS
+    sources:
+      - path: Baoboiii
+    info:
+      path: Baoboiii/Info.plist
+      properties:
+        CFBundleDisplayName: baoboiii
+        CFBundleDevelopmentRegion: vi
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIApplicationSupportsIndirectInputEvents: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSPhotoLibraryAddUsageDescription: "baoboiii cần quyền này để lưu ảnh đã Việt hoá vào Thư viện."
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_NAME: baoboiii
+        PRODUCT_MODULE_NAME: Baoboiii
+        PRODUCT_BUNDLE_IDENTIFIER: com.gigilee.baoboiii
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_PREVIEWS: YES
+  BaoboiiiTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: BaoboiiiTests
+    dependencies:
+      - target: Baoboiii
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.gigilee.baoboiii.tests
+schemes:
+  Baoboiii:
+    build:
+      targets:
+        Baoboiii: all
+        BaoboiiiTests: [test]
+    test:
+      config: Debug
+      targets:
+        - BaoboiiiTests
+    run:
+      config: Debug
+    archive:
+      config: Release
